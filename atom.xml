@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-08T02:07:30.209Z</updated>
+  <updated>2020-07-08T11:35:58.014Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>hexo 常见问题解决</title>
+    <link href="http://yoursite.com/2020/07/08/hexo%20%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/"/>
+    <id>http://yoursite.com/2020/07/08/hexo%20%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</id>
+    <published>2020-07-08T11:28:54.805Z</published>
+    <updated>2020-07-08T11:35:58.014Z</updated>
+    
+    <content type="html"><![CDATA[<p>1 在hexo g hexo d后 CNAME文件不见了导致网站404：</p><p>需要重新git push一下</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br><span class="line">git remote add origin https:&#x2F;&#x2F;github.com&#x2F;xilousonw&#x2F;xilousonw.github.io</span><br><span class="line">git add .</span><br><span class="line">git commit -m &quot;Initial commit&quot;</span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure><p>2.在执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git remote add origin https:&#x2F;&#x2F;github.com&#x2F;xilousonw&#x2F;xilousonw.github.io</span><br></pre></td></tr></table></figure><p>后，出现</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fatal: remote origin already exists.</span><br></pre></td></tr></table></figure><p>这事由于目标已经存在</p><p>需要执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote rm origin</span><br><span class="line">然后重新执行</span><br><span class="line">git remote add origin https:&#x2F;&#x2F;github.com&#x2F;xilousonw&#x2F;xilousonw.github.io</span><br></pre></td></tr></table></figure><p>3.如果在执行git push之后出现</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">To https:&#x2F;&#x2F;github.com&#x2F;xilousonw&#x2F;xilousonw.github.io</span><br><span class="line"> ! [rejected]        master -&gt; master (fetch first)</span><br><span class="line">error: failed to push some refs to &#39;https:&#x2F;&#x2F;github.com&#x2F;xilousonw&#x2F;xilousonw.github.io&#39;</span><br><span class="line">hint: Updates were rejected because the remote contains work that you do</span><br><span class="line">hint: not have locally. This is usually caused by another repository pushing</span><br><span class="line">hint: to the same ref. You may want to first integrate the remote changes</span><br><span class="line">hint: (e.g., &#39;git pull ...&#39;) before pushing again.</span><br><span class="line">hint: See the &#39;Note about fast-forwards&#39; in &#39;git push --help&#39; for details.</span><br></pre></td></tr></table></figure><p>那么只需要执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git pull --rebase origin master</span><br></pre></td></tr></table></figure><p>然后重新push即可</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;1 在hexo g hexo d后 CNAME文件不见了导致网站404：&lt;/p&gt;
+&lt;p&gt;需要重新git push一下&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span c
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>10-drf-Xadmin的使用</title>
