@@ -1,0 +1,156 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>1-Linux的发展史 | 西楼</title><meta name="description" content="什么是LinuxLinux:和我们常见的Windows一样，都是操作系统，但不同的是:Windows: 收费，不开源，主要用于日常办公、游戏、娱乐多一些。Linux: 免费，开源，主要用于服务器领域，性能稳定，安全。例如:淘宝、百度、腾讯等互联网公司，他们使用的服务器全都是 Linux 系统。 一 Linux前身1968年 Multics项目 MIT**、Bell\实验室、美国通用电气有限公司走到"><meta name="author" content="xilousonw"><meta name="copyright" content="xilousonw"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://yoursite.com/2019/02/20/Linux%E2%80%94%E2%80%94%E5%8F%91%E5%B1%95%E5%8F%B2/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="1-Linux的发展史"><meta property="og:url" content="http://yoursite.com/2019/02/20/Linux%E2%80%94%E2%80%94%E5%8F%91%E5%B1%95%E5%8F%B2/"><meta property="og:site_name" content="西楼"><meta property="og:description" content="什么是LinuxLinux:和我们常见的Windows一样，都是操作系统，但不同的是:Windows: 收费，不开源，主要用于日常办公、游戏、娱乐多一些。Linux: 免费，开源，主要用于服务器领域，性能稳定，安全。例如:淘宝、百度、腾讯等互联网公司，他们使用的服务器全都是 Linux 系统。 一 Linux前身1968年 Multics项目 MIT**、Bell\实验室、美国通用电气有限公司走到"><meta property="og:image" content="http://yoursite.com/img/python+django.jpeg"><meta property="article:published_time" content="2019-02-20T12:53:28.000Z"><meta property="article:modified_time" content="2020-08-18T12:09:29.202Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="prev" title="2-Linux——Shell" href="http://yoursite.com/2019/02/21/Linux%E2%80%94%E2%80%94shell/"><link rel="next" title="10-drf-Xadmin的使用" href="http://yoursite.com/2018/06/10/10-drf-Xadmin%E7%9A%84%E4%BD%BF%E7%94%A8/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="西楼" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Linux"><span class="toc-number">1.</span> <span class="toc-text">什么是Linux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一-Linux前身"><span class="toc-number">2.</span> <span class="toc-text">一 Linux前身</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-Linux诞生"><span class="toc-number">3.</span> <span class="toc-text">二 Linux诞生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-开源文化"><span class="toc-number">4.</span> <span class="toc-text">三 开源文化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-Linux系统特点"><span class="toc-number">5.</span> <span class="toc-text">四 Linux系统特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-Linux分支"><span class="toc-number">6.</span> <span class="toc-text">五 Linux分支</span></a></li></ol></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/python+django.jpeg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">西楼</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">1-Linux的发展史</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="Created 2019-02-20 20:53:28"><i class="far fa-calendar-alt fa-fw"></i> Created 2019-02-20</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="Updated 2020-08-18 20:09:29"><i class="fas fa-history fa-fw"></i> Updated 2020-08-18</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta__icon"></i><span>Post View:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="far fa-comments fa-fw post-meta__icon"></i><span>Comments:</span><span class="disqus-comment-count comment-count"><a href="http://yoursite.com/2019/02/20/Linux%E2%80%94%E2%80%94%E5%8F%91%E5%B1%95%E5%8F%B2/#disqus_thread"></a></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="什么是Linux"><a href="#什么是Linux" class="headerlink" title="什么是Linux"></a>什么是Linux</h2><p><em>Linux:和我们常见的Windows一样，都是操作系统，但不同的是:<br>Windows: 收费，不开源，主要用于日常办公、游戏、娱乐多一些。<br>Linux: 免费，开源，主要用于服务器领域，性能稳定，安全。<br>例如:淘宝、百度、腾讯等互联网公司，他们使用的服务器全都是 Linux 系统。</em></p>
+<h2 id="一-Linux前身"><a href="#一-Linux前身" class="headerlink" title="一 Linux前身"></a>一 Linux前身</h2><p>1968年 Multics项目</p>
+<p><strong>MIT**</strong>、Bell<strong><em>\</em>实验室、美国通用电气有限公司</strong>走到了一起，致力于开发Multics项目。到后期由于开发进度不是很好，MIT和Bell实验室相继离开这个项目的开发，最终导致项目搁浅。</p>
+<p><strong>1970**</strong>年（Unix<strong><em>\</em>元年，时间戳）</strong> Unix诞生</p>
+<p>当时在开发Multics项目的时候，实验室中有一个开发成员开发了一款游戏（travel space：遨游太空），因为两个实验室相继离开项目开发，导致这名开发人员没法玩游戏，后来他提议组织人员重新在Multics项目之上重新的开发，也就出现了1970年的Unix。当时Unix操作系统是使用的<strong>汇编语言（机器语言）</strong>开发的。</p>
+<p>1973年 用<strong>C**</strong>语言**重写Unix</p>
+<p>因为汇编语言有一个最大的局限性：对于计算机硬件过于依赖。导致移植性不好，所以后期在1973年使用了C语言对其进行重新开发。</p>
+<p>1975年 Bell实验室允许大学使用Unix。</p>
+<p>1975年，bell实验室允许大学使用Unix操作系统用于教学作用，而不允许用于商业用途。</p>
+<h2 id="二-Linux诞生"><a href="#二-Linux诞生" class="headerlink" title="二 Linux诞生"></a>二 Linux诞生</h2><p>人物 Linus</p>
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/00831rSTly1gdk2y1v2c9j30ia0mi7vw.jpg" alt="image-20200406153007420"></p>
+<p>Linux的开发作者，Linux之父，李纳斯·托瓦兹。Linux诞生时是荷兰在校大学生。</p>
+<p>1991年 0.0.1版本</p>
+<p>李纳斯当时学校使用的就是Unix操作系统，然后其对系统的底层代码进行了修改，放到了学校为学生开放的网站上，原先他把文件命名写成了Linus’s Unix，后期网络管理发现之后觉得这个名字不好，自己手动的将名字改成Linux。随后其他同学下载之后发现这个版本还是挺好用的，随后都把自己代码贡献给李纳斯。</p>
+<p>1992年 0.0.2版本</p>
+<p>1994年 1.0版本</p>
+<p>2003年 2.6版本</p>
+<p><strong>上述所提及的版本号并不是分支版本，而是指Linux**</strong>的内核版本。</p>
+<p><a href="https://www.kernel.org/" target="_blank" rel="noopener">Linux内核网站</a>（现在3.x多一些，原来2.x多，现在docker要跑在3上）<br><a href="https://www.doit.com.cn/p/278606.html" target="_blank" rel="noopener">linux大神在2017-06-26来到中国</a></p>
+<h2 id="三-开源文化"><a href="#三-开源文化" class="headerlink" title="三 开源文化"></a>三 开源文化</h2><p>Linux是<strong>开源</strong>的操作系统。所谓开源就是指开放源代码。</p>
+<p><em>自由软件之父 Richard M. Stallman 1984 GNU组织 copyleft opensource free GPL</em></p>
+<p>理查德·马修·斯托曼（Richard Matthew Stallman, RMS），于1953年出生，自由软件运动的精神领袖、GNU计划以及自由软件基金会（Free Software Foundation）的创立者、著名黑客</p>
+<p>copyleft: 代表无版权。copyright: 则代表有版权。<br>opensource free: 源代码开放、软件谁都可以使用、谁都可以传播、谁都可以二次开发，使用GPL协议保护<br>GPL: 通用版权许可证协议，如果软件被打上GPL，那么任何人都可以对这个软件进行修改，但是修改完之后必须将源码发布出来，以便更好的传承下去。(那Linux中的软件百分之80都是GPL提供)*</p>
+<p>Linux内核使用GPL协议发布，内核也是开源，有了内核的加入，整个GNU的系统更加的完善。其实Linux完整叫法应该叫GNU/Linux，GNU的软件加上Linux内核。</p>
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ght0idita4j30qe0hi197.jpg" alt="image-20200816221714662"></p>
+<p><strong>1983**</strong>年 GNU<strong><em>\</em>计划</strong></p>
+<p>1985年 FSF基金会</p>
+<p>1990年 Emacs、<strong>GCC</strong>（c语言的编译器）、程序库</p>
+<p>1991年 Stallman去找Linus，商谈让Linux加入其开源计划（GNU计划）</p>
+<p>1992年 GNU/Linux</p>
+<h2 id="四-Linux系统特点"><a href="#四-Linux系统特点" class="headerlink" title="四 Linux系统特点"></a>四 Linux系统特点</h2><p>开放性（开源）、多用户、多任务、良好的用户界面、优异的性能与稳定性</p>
+<p>多用户多任务：</p>
+<p>单用户：一个用户，在登录计算机（操作系统），只能允许<strong>同时</strong>登录一个用户；</p>
+<p>单任务：一个任务，允许用户<strong>同时</strong>进行的操作任务数量；</p>
+<p>多用户：多个用户，在登录计算机（操作系统），允许<strong>同时</strong>登录多个用户进行操作；</p>
+<p>多任务：多个任务，允许用户<strong>同时</strong>进行多个操作任务；</p>
+<p><strong>Windows**</strong>属于：单用户、多任务。**</p>
+<p><strong>Linux**</strong>属于：多用户、多任务。**</p>
+<h2 id="五-Linux分支"><a href="#五-Linux分支" class="headerlink" title="五 Linux分支"></a>五 Linux分支</h2><p>我们现在说的Linux其实都是指的是发行版(Distribution version)，就是使用Linux内核加上各种GNU的库文件、应用程序，构造而成的操作系统。Linux发行版介绍RHEL/Centos/Ubuntu/Suse<br>Redhat 1993年，将Linux的内核进行编译安装相应软件进行发行。<br>CentOS 社区企业级操作系统, 改与Redhat, 完全开源。<br>Ubuntu 社区维护， 现在主要做手机系统和电脑桌面系统。</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xilousonw</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/02/20/Linux%E2%80%94%E2%80%94%E5%8F%91%E5%B1%95%E5%8F%B2/">http://yoursite.com/2019/02/20/Linux%E2%80%94%E2%80%94%E5%8F%91%E5%B1%95%E5%8F%B2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/python+django.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><button class="reward-button"><i class="fas fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="微信支付" onclick="window.open('/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">微信支付</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="支付宝" onclick="window.open('/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></button></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/02/21/Linux%E2%80%94%E2%80%94shell/"><img class="prev-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">2-Linux——Shell</div></div></a></div><div class="next-post pull-right"><a href="/2018/06/10/10-drf-Xadmin%E7%9A%84%E4%BD%BF%E7%94%A8/"><img class="next-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">10-drf-Xadmin的使用</div></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div><div id="disqus_thread"></div><script>var disqus_config = function () {
+  this.page.url = 'http://yoursite.com/2019/02/20/Linux%E2%80%94%E2%80%94%E5%8F%91%E5%B1%95%E5%8F%B2/';
+  this.page.identifier = '2019/02/20/Linux——发展史/';
+  this.page.title = '1-Linux的发展史';
+};
+(function() { 
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+</script><script>function getDisqusCount() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/count.js';
+  s.id = 'dsq-count-scr';
+  (d.head || d.body).appendChild(s);
+}
+
+window.addEventListener('load', getDisqusCount, false);</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By xilousonw</div><div class="framework-info"><span>Driven </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="font_plus" title="Increase Font Size"><i class="fas fa-plus"></i></button><button id="font_minus" title="Decrease Font Size"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="scroll_to_comment fas fa-comments"></i></a><button class="close" id="mobile-toc-button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script></body></html>

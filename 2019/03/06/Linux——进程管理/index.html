@@ -1,0 +1,430 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>13-Linux——进程管理 | 西楼</title><meta name="description" content="1.介绍1.什么是进程比如: 开发写的代码我们称为程序，那么将开发的代码运行起来。我们称为进程。总结一句话就是: 当我们运行一个程序，那么我们将运行的程序叫进程。PS1: 当程序运行为进程后，系统会为该进程分配内存，以及进程运行的身份和权限。PS2: 在进程运行的过程中，系统会有各种指标来表示当前运行的状态。 2.程序和进程的区别1.程序是数据和指令的集合，是一个静态的概念。比如&#x2F;bin&#x2F;ls、&#x2F;"><meta name="author" content="xilousonw"><meta name="copyright" content="xilousonw"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="13-Linux——进程管理"><meta property="og:url" content="http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><meta property="og:site_name" content="西楼"><meta property="og:description" content="1.介绍1.什么是进程比如: 开发写的代码我们称为程序，那么将开发的代码运行起来。我们称为进程。总结一句话就是: 当我们运行一个程序，那么我们将运行的程序叫进程。PS1: 当程序运行为进程后，系统会为该进程分配内存，以及进程运行的身份和权限。PS2: 在进程运行的过程中，系统会有各种指标来表示当前运行的状态。 2.程序和进程的区别1.程序是数据和指令的集合，是一个静态的概念。比如&#x2F;bin&#x2F;ls、&#x2F;"><meta property="og:image" content="http://yoursite.com/img/python+django.jpeg"><meta property="article:published_time" content="2019-03-06T13:50:40.000Z"><meta property="article:modified_time" content="2020-08-18T12:14:26.216Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="prev" title="14-Linux——系统服务" href="http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/"><link rel="next" title="12-Linux——软件管理" href="http://yoursite.com/2019/03/04/Linux%E2%80%94%E2%80%94%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="西楼" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-介绍"><span class="toc-number">1.</span> <span class="toc-text">1.介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是进程"><span class="toc-number">1.1.</span> <span class="toc-text">1.什么是进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-程序和进程的区别"><span class="toc-number">1.2.</span> <span class="toc-text">2.程序和进程的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-进程的生命周期"><span class="toc-number">1.3.</span> <span class="toc-text">3.进程的生命周期</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-监控进程状态"><span class="toc-number">2.</span> <span class="toc-text">2.监控进程状态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-使用ps命令查看当前的进程状态-静态"><span class="toc-number">2.1.</span> <span class="toc-text">1.使用ps命令查看当前的进程状态(静态)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-STAT状态的S、Ss、S-、R、R、S-等等，都是什么意思"><span class="toc-number">2.2.</span> <span class="toc-text">2.STAT状态的S、Ss、S+、R、R、S+等等，都是什么意思?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用top命令查看当前的进程状态-动态"><span class="toc-number">2.3.</span> <span class="toc-text">2.使用top命令查看当前的进程状态(动态)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-管理进程状态"><span class="toc-number">3.</span> <span class="toc-text">3.管理进程状态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-使用kill-l列出当前系统所支持的信号"><span class="toc-number">3.1.</span> <span class="toc-text">1.使用kill -l列出当前系统所支持的信号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-管理后台进程"><span class="toc-number">4.</span> <span class="toc-text">4.管理后台进程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是后台进程"><span class="toc-number">4.1.</span> <span class="toc-text">1.什么是后台进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-我们为什么要将进程放入后台运行"><span class="toc-number">4.2.</span> <span class="toc-text">2.我们为什么要将进程放入后台运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-使用什么工具将进程放入后台"><span class="toc-number">4.3.</span> <span class="toc-text">3.使用什么工具将进程放入后台</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-进程的优先级-进阶"><span class="toc-number">5.</span> <span class="toc-text">5.进程的优先级[进阶]</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么优先级"><span class="toc-number">5.1.</span> <span class="toc-text">1.什么优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么要有系统优先级"><span class="toc-number">5.2.</span> <span class="toc-text">2.为什么要有系统优先级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-系统中如何给进程配置优先级"><span class="toc-number">5.3.</span> <span class="toc-text">3.系统中如何给进程配置优先级?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-系统平均负载-进阶"><span class="toc-number">6.</span> <span class="toc-text">6.系统平均负载[进阶]</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是平均负载"><span class="toc-number">6.1.</span> <span class="toc-text">1.什么是平均负载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-可运行状态和不可中断状态是什么"><span class="toc-number">6.2.</span> <span class="toc-text">2.可运行状态和不可中断状态是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-那平均负载为多少时合理"><span class="toc-number">6.3.</span> <span class="toc-text">3.那平均负载为多少时合理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-那么在实际生产环境中，平均负载多高时，需要我们重点关注呢？"><span class="toc-number">6.4.</span> <span class="toc-text">4.那么在实际生产环境中，平均负载多高时，需要我们重点关注呢？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-平均负载与-CPU-使用率有什么关系"><span class="toc-number">6.5.</span> <span class="toc-text">5.平均负载与 CPU 使用率有什么关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-平均负载案例分析实战"><span class="toc-number">6.6.</span> <span class="toc-text">6.平均负载案例分析实战</span></a></li></ol></li></ol></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/python+django.jpeg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">西楼</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">13-Linux——进程管理</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="Created 2019-03-06 21:50:40"><i class="far fa-calendar-alt fa-fw"></i> Created 2019-03-06</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="Updated 2020-08-18 20:14:26"><i class="fas fa-history fa-fw"></i> Updated 2020-08-18</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta__icon"></i><span>Post View:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="far fa-comments fa-fw post-meta__icon"></i><span>Comments:</span><span class="disqus-comment-count comment-count"><a href="http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/#disqus_thread"></a></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h2><h3 id="1-什么是进程"><a href="#1-什么是进程" class="headerlink" title="1.什么是进程"></a>1.什么是进程</h3><p>比如: 开发写的代码我们称为程序，那么将开发的代码运行起来。我们称为进程。<br>总结一句话就是: 当我们运行一个程序，那么我们将运行的程序叫进程。<br>PS1: 当程序运行为进程后，系统会为该进程分配内存，以及进程运行的身份和权限。<br>PS2: 在进程运行的过程中，系统会有各种指标来表示当前运行的状态。</p>
+<h3 id="2-程序和进程的区别"><a href="#2-程序和进程的区别" class="headerlink" title="2.程序和进程的区别"></a>2.程序和进程的区别</h3><p>1.程序是数据和指令的集合，是一个静态的概念。比如/bin/ls、/bin/cp等二进制文件。同时程序可以长期存在系统中。<br>2.进程是程序运行的过程，是一个动态的概念。进程是存在生命周期的概念的，也就是说进程会随着程序的终止而销毁，不会永久存在系统中。</p>
+<h3 id="3-进程的生命周期"><a href="#3-进程的生命周期" class="headerlink" title="3.进程的生命周期"></a>3.进程的生命周期</h3><p>生命周期就是指一个对象的生老病死。用处很广。</p>
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu76tkolgj310w0a20u5.jpg" alt="img"></p>
+<p>当父进程接收到任务调度时，会通过fock派生子进程来处理，那么子进程会继承父进程属性。<br>1.子进程在处理任务代码时，父进程会进入等待状态中…<br>2.子进程在处理任务代码后，会执行退出，然后唤醒父进程来回收子进程的资源。<br>3.如果子进程在处理任务过程中，父进程退出了，子进程没有退出，那么这些子进程就没有父进程来管理了，就变成僵尸进程。<br>PS: 每个进程都父进程的PPID，子进程则叫PID。</p>
+<p>例: 假设现在我是蒋先生(system进程)….故事持续中…..</p>
+<h2 id="2-监控进程状态"><a href="#2-监控进程状态" class="headerlink" title="2.监控进程状态"></a>2.监控进程状态</h2><p>程序在运行后，我们需要了解进程的运行状态。查看进程的状态分为: 静态和动态两种方式</p>
+<h3 id="1-使用ps命令查看当前的进程状态-静态"><a href="#1-使用ps命令查看当前的进程状态-静态" class="headerlink" title="1.使用ps命令查看当前的进程状态(静态)"></a>1.使用ps命令查看当前的进程状态(静态)</h3><p>1)示例、ps -aux常用组合，查看进程 用户、PID、占用cpu百分比、占用内存百分比、状态、执行的命令等</p>
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu770thw2j31gq0p4n8c.jpg" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>USER</td>
+<td>启动进程的用户</td>
+</tr>
+<tr>
+<td>PID</td>
+<td>进程运行的ID号</td>
+</tr>
+<tr>
+<td>%CPU</td>
+<td>进程占用CPU百分比</td>
+</tr>
+<tr>
+<td>%MEM</td>
+<td>进程占用内存百分比</td>
+</tr>
+<tr>
+<td>VSZ</td>
+<td>进程占用虚拟内存大小 (单位KB)</td>
+</tr>
+<tr>
+<td>RSS</td>
+<td>进程占用物理内存实际大小 (单位KB)</td>
+</tr>
+<tr>
+<td>TTY</td>
+<td>进程是由哪个终端运行启动的tty1、pts/0等 ?表示内核程序与终端无关</td>
+</tr>
+<tr>
+<td>STAT</td>
+<td>进程运行过程中的状态 man ps （/STATE）</td>
+</tr>
+<tr>
+<td>START</td>
+<td>进程的启动时间</td>
+</tr>
+<tr>
+<td>TIME</td>
+<td>进程占用 CPU 的总时间(为0表示还没超过秒)</td>
+</tr>
+<tr>
+<td>COMMAND</td>
+<td>程序的运行指令，[ 方括号 ] 属于内核态的进程。 没有 [ ] 的是用户态进程。</td>
+</tr>
+</tbody></table>
+<h3 id="2-STAT状态的S、Ss、S-、R、R、S-等等，都是什么意思"><a href="#2-STAT状态的S、Ss、S-、R、R、S-等等，都是什么意思" class="headerlink" title="2.STAT状态的S、Ss、S+、R、R、S+等等，都是什么意思?"></a>2.STAT状态的S、Ss、S+、R、R、S+等等，都是什么意思?</h3><p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu779g9pgj31gq0p4am5.jpg" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>STAT基本状态</th>
+<th>描述</th>
+<th>STAT状态+符号</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>R</td>
+<td>进程运行</td>
+<td>s</td>
+<td>进程是控制进程， Ss进程的领导者，父进程</td>
+</tr>
+<tr>
+<td>S</td>
+<td>可中断睡眠</td>
+<td>&lt;</td>
+<td>进程运行在高优先级上，S&lt;优先级较高的进程</td>
+</tr>
+<tr>
+<td>T</td>
+<td>进程被暂停</td>
+<td>N</td>
+<td>进程运行在低优先级上，SN优先级较低的进程</td>
+</tr>
+<tr>
+<td>D</td>
+<td>不可中断睡眠</td>
+<td>+</td>
+<td>当前进程运行在前台，R+该表示进程在前台运行</td>
+</tr>
+<tr>
+<td>Z</td>
+<td>僵尸进程</td>
+<td>l</td>
+<td>进程是多线程的，Sl表示进程是以线程方式运行</td>
+</tr>
+</tbody></table>
+<p>案例一、PS命令查看进程状态切换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#1.在终端1上运行vim</span><br><span class="line">[root@lqz ~]# vim oldboy</span><br><span class="line"></span><br><span class="line">#2.在终端2上运行ps命令查看状态</span><br><span class="line">[root@lqz ~]# ps aux|grep oldboy    #S表示睡眠模式，+表示前台运行</span><br><span class="line">root      58118  0.4  0.2 151788  5320 pts&#x2F;1    S+   22:11   0:00 oldboy</span><br><span class="line">root      58120  0.0  0.0 112720   996 pts&#x2F;0    R+   22:12   0:00 grep --color&#x3D;auto oldboy</span><br><span class="line">#在终端1上挂起vim命令，按下：ctrl+z </span><br><span class="line"></span><br><span class="line">#3.回到终端2再次运行ps命令查看状态</span><br><span class="line">[root@lqz ~]# ps aux|grep oldboy    #T表示停止状态</span><br><span class="line">root      58118  0.1  0.2 151788  5320 pts&#x2F;1    T    22:11   0:00 vim oldboy</span><br><span class="line">root      58125  0.0  0.0 112720   996 pts&#x2F;0    R+   22:12   0:00 grep --color&#x3D;auto oldboy</span><br></pre></td></tr></table></figure>
+
+<p>案例二、PS命令查看不可中断状态进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#1.使用tar打包文件时，可以通过终端不断查看状态，由S+，R+变为D+</span><br><span class="line">[root@lqz ~]# tar -czf etc.tar.gz &#x2F;etc&#x2F; &#x2F;usr&#x2F; &#x2F;var&#x2F;</span><br><span class="line"></span><br><span class="line">[root@lqz ~]# ps aux|grep tar|grep -v grep</span><br><span class="line">root      58467  5.5  0.2 127924  5456 pts&#x2F;1    R+   22:22   0:04 tar -czf etc.tar.gz &#x2F;etc&#x2F; </span><br><span class="line">[root@lqz ~]# ps aux|grep tar|grep -v grep</span><br><span class="line">root      58467  5.5  0.2 127088  4708 pts&#x2F;1    S+   22:22   0:03 tar -czf etc.tar.gz &#x2F;etc&#x2F; </span><br><span class="line">[root@lqz ~]# ps aux|grep tar|grep -v grep</span><br><span class="line">root      58467  5.6  0.2 127232  4708 pts&#x2F;1    D+   22:22   0:03 tar -czf etc.tar.gz &#x2F;etc&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-使用top命令查看当前的进程状态-动态"><a href="#2-使用top命令查看当前的进程状态-动态" class="headerlink" title="2.使用top命令查看当前的进程状态(动态)"></a>2.使用top命令查看当前的进程状态(动态)</h3><p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu77gow7kj31ea0mcdrs.jpg" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tasks: 129 total</td>
+<td>当然进程的总数</td>
+</tr>
+<tr>
+<td>1 running</td>
+<td>正在运行的进程数</td>
+</tr>
+<tr>
+<td>128 sleeping</td>
+<td>睡眠的进程数</td>
+</tr>
+<tr>
+<td>0 stopped</td>
+<td>停止的进程数</td>
+</tr>
+<tr>
+<td>0 zombie</td>
+<td>僵尸进程数</td>
+</tr>
+<tr>
+<td>%Cpu(s): 0.7 us</td>
+<td>系统用户进程使用CPU百分比</td>
+</tr>
+<tr>
+<td>0.7 sy</td>
+<td>内核中的进程占用CPU百分比，通常内核是于硬件进行交互</td>
+</tr>
+<tr>
+<td>98.7 id</td>
+<td>空闲CPU的百分比</td>
+</tr>
+<tr>
+<td>0.0 wa</td>
+<td>CPU等待IO完成的时间</td>
+</tr>
+<tr>
+<td>0.0 hi</td>
+<td>硬中断，占的CPU百分比</td>
+</tr>
+<tr>
+<td>0.0 si</td>
+<td>软中断，占的CPU百分比</td>
+</tr>
+<tr>
+<td>0.0 st</td>
+<td>比如虚拟机占用物理CPU的时间</td>
+</tr>
+</tbody></table>
+<p><a href="https://www.cnblogs.com/lqz/p/10789270.html" target="_blank" rel="noopener">PS: 如何理解中断这个东西</a></p>
+<p>top 常见指令</p>
+<table>
+<thead>
+<tr>
+<th>字母</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>h</td>
+<td>查看帮出</td>
+</tr>
+<tr>
+<td>1</td>
+<td>数字1，显示所有CPU核心的负载</td>
+</tr>
+<tr>
+<td>z</td>
+<td>以高亮显示数据</td>
+</tr>
+<tr>
+<td>b</td>
+<td>高亮显示处于R状态的进程</td>
+</tr>
+<tr>
+<td>M</td>
+<td>按内存使用百分比排序输出</td>
+</tr>
+<tr>
+<td>P</td>
+<td>按CPU使用百分比排序输出</td>
+</tr>
+<tr>
+<td>q</td>
+<td>退出top</td>
+</tr>
+</tbody></table>
+<h2 id="3-管理进程状态"><a href="#3-管理进程状态" class="headerlink" title="3.管理进程状态"></a>3.管理进程状态</h2><p>当程序运行为进程后，如果希望停止进程，怎么办呢? 那么此时我们可以使用linux的kill命令对进程发送关闭信号。当然除了kill、还有killall，pkill</p>
+<h3 id="1-使用kill-l列出当前系统所支持的信号"><a href="#1-使用kill-l列出当前系统所支持的信号" class="headerlink" title="1.使用kill -l列出当前系统所支持的信号"></a>1.使用kill -l列出当前系统所支持的信号</h3><p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu77namunj31ea0mcqfj.jpg" alt="img"><br>虽然linux支持信号很多，但是我们仅列出我们最为常用的3个信号</p>
+<table>
+<thead>
+<tr>
+<th>数字编号</th>
+<th>信号含义</th>
+<th>信号翻译</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>SIGHUP</td>
+<td>通常用来重新加载配置文件</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SIGKILL</td>
+<td>强制杀死进程</td>
+</tr>
+<tr>
+<td>15</td>
+<td>SIGTERM</td>
+<td>终止进程，默认kill使用该信号</td>
+</tr>
+</tbody></table>
+<p>1.我们使用kill命令杀死指定PID的进程。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#1.给 vsftpd 进程发送信号 1,15</span><br><span class="line">[root@lqz ~]# yum -y install vsftpd</span><br><span class="line">[root@lqz ~]# systemctl start vsftpd</span><br><span class="line">[root@lqz ~]# ps aux|grep vsftpd</span><br><span class="line"></span><br><span class="line">#2.发送重载信号，例如 vsftpd 的配置文件发生改变，希望重新加载</span><br><span class="line">[root@lqz ~]# kill -1 9160</span><br><span class="line"></span><br><span class="line">#3.发送停止信号，当然vsftpd 服务有停止的脚本 systemctl stop vsftpd</span><br><span class="line">[root@lqz ~]# kill 9160</span><br><span class="line"></span><br><span class="line">#4.发送强制停止信号，当无法停止服务时，可强制终止信号</span><br><span class="line">[root@lqz ~]# kill -9 9160</span><br></pre></td></tr></table></figure>
+
+<p>2.Linux系统中的killall、pkill命令用于杀死指定名字的进程。我们可以使用kill命令杀死指定进程PID的进程，如果要找到我们需要杀死的进程，我们还需要在之前使用ps等命令再配合grep来查找进程，而killall、pkill把这两个过程合二为一，是一个很好用的命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#例1、通过服务名称杀掉进程</span><br><span class="line">[root@lqz ~]# pkill nginx</span><br><span class="line">[root@lqz ~]# killall nginx</span><br><span class="line"></span><br><span class="line">#例2、使用pkill踢出从远程登录到本机的用户，终止pts&#x2F;0上所有进程, 并且bash也结束（用户被强制退出）</span><br><span class="line">[root@lqz ~]# pkill -9 -t pts&#x2F;0</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-管理后台进程"><a href="#4-管理后台进程" class="headerlink" title="4.管理后台进程"></a>4.管理后台进程</h2><h3 id="1-什么是后台进程"><a href="#1-什么是后台进程" class="headerlink" title="1.什么是后台进程"></a>1.什么是后台进程</h3><p>通常进程都会在终端前台运行，一旦关闭终端，进程也会随着结束，那么此时我们就希望进程能在后台运行，就是将在前台运行的进程放入后台运行，这样及时我们关闭了终端也不影响进程的正常运行。</p>
+<h3 id="2-我们为什么要将进程放入后台运行"><a href="#2-我们为什么要将进程放入后台运行" class="headerlink" title="2.我们为什么要将进程放入后台运行"></a>2.我们为什么要将进程放入后台运行</h3><p>比如：我们此前在国内服务器往国外服务器传输大文件时，由于网络的问题需要传输很久，如果在传输的过程中出现网络抖动或者不小心关闭了终端则会导致传输失败，如果能将传输的进程放入后台，是不是就能解决此类问题了。</p>
+<h3 id="3-使用什么工具将进程放入后台"><a href="#3-使用什么工具将进程放入后台" class="headerlink" title="3.使用什么工具将进程放入后台"></a>3.使用什么工具将进程放入后台</h3><p>早期的时候大家都选择使用&amp;符号将进程放入后台，然后在使用jobs、bg、fg等方式查看进程状态，但太麻烦了。也不直观，所以我们推荐使用screen。</p>
+<p>1.jobs、bg、fg的使用(强烈不推荐，了解即可)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@lqz ~]# sleep 3000 &amp; &#x2F;&#x2F;运行程序(时)，让其在后台执行 </span><br><span class="line">[root@lqz ~]# sleep 4000 &#x2F;&#x2F;^Z,将前台的程序挂起(暂停)到后台 </span><br><span class="line">[2]+ Stopped sleep 4000</span><br><span class="line">[root@lqz ~]# ps aux |grep sleep</span><br><span class="line">[root@lqz ~]# jobs  &#x2F;&#x2F;查看后台作业</span><br><span class="line">[1]- Running sleep 3000 &amp; </span><br><span class="line">[2]+ Stopped sleep 4000</span><br><span class="line"></span><br><span class="line">[root@lqz ~]# bg %2     &#x2F;&#x2F;让作业 2 在后台运行</span><br><span class="line">[root@lqz ~]# fg %1     &#x2F;&#x2F;将作业 1 调回到前台</span><br><span class="line">[root@lqz ~]# kill %1   &#x2F;&#x2F;kill 1，终止 PID 为 1 的进程</span><br><span class="line"></span><br><span class="line">[root@lqz ~]# (while :; do date; sleep 2; done) &amp; &#x2F;&#x2F;进程在后台运行，但输出依然在当前终端</span><br><span class="line">[root@lqz ~]# (while :; do date; sleep 2; done) &amp;&gt;&#x2F;dev&#x2F;null &amp;</span><br></pre></td></tr></table></figure>
+
+<p>2.screen的使用(强烈推荐，生产必用)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">#1.安装</span><br><span class="line">[root@oldboy ~]# yum install screen -y</span><br><span class="line"></span><br><span class="line">#2.开启一个screen窗口,指定名称</span><br><span class="line">[root@oldboy ~]# screen -S wget_mysql</span><br><span class="line"></span><br><span class="line">#3.在screen窗口中执行任务即可</span><br><span class="line"></span><br><span class="line">#4.平滑的退出screen,但不会终止screen中的任务。注意: 如果使用exit 才算真的关闭screen窗口</span><br><span class="line">ctrl+a+d</span><br><span class="line"></span><br><span class="line">#5.查看当前正在运行的screen有哪些</span><br><span class="line">[root@oldboy ~]# screen -list</span><br><span class="line">There is a screen on:</span><br><span class="line">    22058.wget_mysql    (Detached)</span><br><span class="line">1 Socket in &#x2F;var&#x2F;run&#x2F;screen&#x2F;S-root.</span><br><span class="line"></span><br><span class="line">#6.进入正在运行的screen</span><br><span class="line">[root@oldboy ~]# screen -r wget_mysql</span><br><span class="line">[root@oldboy ~]# screen -r 22058</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-进程的优先级-进阶"><a href="#5-进程的优先级-进阶" class="headerlink" title="5.进程的优先级[进阶]"></a>5.进程的优先级[进阶]</h2><h3 id="1-什么优先级"><a href="#1-什么优先级" class="headerlink" title="1.什么优先级"></a>1.什么优先级</h3><p>优先级指的是优先享受资源，比如排队买票时，军人优先、老人优先。等等</p>
+<h3 id="2-为什么要有系统优先级"><a href="#2-为什么要有系统优先级" class="headerlink" title="2.为什么要有系统优先级"></a>2.为什么要有系统优先级</h3><p>举个例子: 海底捞火锅正常情况下响应就特别快，那么当节假日来临时人员突增则会导致处理请求特别慢，那么假设我是海底捞VIP客户(最高优先级)，无论门店多么繁忙，我都不用排队，海底捞人员会直接服务于我，满足我的需求。至于没有VIP的人员(较低优先级)则进入排队等待状态。(PS: 至于等多久，那…..)</p>
+<h3 id="3-系统中如何给进程配置优先级"><a href="#3-系统中如何给进程配置优先级" class="headerlink" title="3.系统中如何给进程配置优先级?"></a>3.系统中如何给进程配置优先级?</h3><p>在启动进程时，为不同的进程使用不同的调度策略。<br>nice 值越高： 表示优先级越低，例如+19，该进程容易将CPU 使用量让给其他进程。<br>nice 值越低： 表示优先级越高，例如-20，该进程更不倾向于让出CPU。</p>
+<p>1) 使用top或ps命令查看进程的优先级</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#1.使用top可以查看nice优先级。  NI: 实际nice级别，默认是0。 PR: 显示nice值，-20映射到0，+19映射到39</span><br><span class="line">PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND</span><br><span class="line">1083 root      20   0  298628   2808   1544 S  0.3  0.1   2:49.28 vmtoolsd</span><br><span class="line">5    root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker&#x2F;0:+</span><br><span class="line"></span><br><span class="line">#2.使用ps查看进程优先级</span><br><span class="line">[root@m01 ~]# ps axo command,nice |grep sshd|grep -v grep</span><br><span class="line">&#x2F;usr&#x2F;sbin&#x2F;sshd -D             0</span><br><span class="line">sshd: root@pts&#x2F;2              0</span><br></pre></td></tr></table></figure>
+
+<p>2) nice指定程序的优先级。语法格式 nice -n 优先级数字 进程名称</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#1.开启vim并且指定程序优先级为-5</span><br><span class="line">[root@m01 ~]# nice -n -5 vim &amp;</span><br><span class="line">[1] 98417</span><br><span class="line"></span><br><span class="line">#2.查看该进程的优先级情况</span><br><span class="line">[root@m01 ~]# ps axo pid,command,nice |grep 98417</span><br><span class="line"> 98417 vim                         -5</span><br></pre></td></tr></table></figure>
+
+<p>3) renice命令修改一个正在运行的进程优先级。语法格式 renice -n 优先级数字 进程pid</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#1.查看sshd进程当前的优先级状态</span><br><span class="line">[root@m01 ~]# ps axo pid,command,nice |grep 折叠shd</span><br><span class="line"> 70840 sshd: root@pts&#x2F;2              0</span><br><span class="line"> 98002 &#x2F;usr&#x2F;sbin&#x2F;sshd -D             0</span><br><span class="line"> </span><br><span class="line">#2.调整sshd主进程的优先级</span><br><span class="line">[root@m01 ~]# renice -n -20 98002</span><br><span class="line">98002 (process ID) old priority 0, new priority -20</span><br><span class="line"></span><br><span class="line">#3.调整之后记得退出终端</span><br><span class="line">[root@m01 ~]# ps axo pid,command,nice |grep 折叠shd</span><br><span class="line"> 70840 sshd: root@pts&#x2F;2              0</span><br><span class="line"> 98002 &#x2F;usr&#x2F;sbin&#x2F;sshd -D           -20</span><br><span class="line">[root@m01 ~]# exit</span><br><span class="line"></span><br><span class="line">#4.当再次登陆sshd服务，会由主进程fork子进程(那么子进程会继承主进程的优先级)</span><br><span class="line">[root@m01 ~]# ps axo pid,command,nice |grep 折叠shd</span><br><span class="line"> 98002 &#x2F;usr&#x2F;sbin&#x2F;sshd -D           -20</span><br><span class="line"> 98122 sshd: root@pts&#x2F;0            -20</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://www.xuliangwei.com/bgx/1337.html" target="_blank" rel="noopener">生产案例、Linux出现假死，怎么办，又如何通过nice解决？</a></p>
+<h2 id="6-系统平均负载-进阶"><a href="#6-系统平均负载-进阶" class="headerlink" title="6.系统平均负载[进阶]"></a>6.系统平均负载[进阶]</h2><p>每次发现系统变慢时，我们通常做的第一件事，就是执行 top 或者 uptime 命令，来了解系统的负载情况。比如像下面这样，我在命令行里输入了 uptime 命令，系统也随即给出了结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# uptime</span><br><span class="line"> 04:49:26 up 2 days,  2:33,  2 users,  load average: 0.70, 0.04, 0.05</span><br><span class="line">#我们已经比较熟悉前面几列，它们分别是当前时间、系统运行时间以及正在登录用户数。</span><br><span class="line"></span><br><span class="line"># 而最后三个数字呢，依次则是过去 1 分钟、5 分钟、15 分钟的平均负载（Load Average）。</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-什么是平均负载"><a href="#1-什么是平均负载" class="headerlink" title="1.什么是平均负载"></a>1.什么是平均负载</h3><p>平均负载不就是单位时间内的 CPU 使用率吗？上面的 0.70，就代表 CPU 使用率是 70%。其实上并…..<br>那到底如何理解平均负载: 平均负载是指单位时间内，系统处于可运行状态和不可中断状态的平均进程数，也就是平均活跃进程数， PS: 平均负载与 CPU 使用率并没有直接关系。</p>
+<h3 id="2-可运行状态和不可中断状态是什么"><a href="#2-可运行状态和不可中断状态是什么" class="headerlink" title="2.可运行状态和不可中断状态是什么"></a>2.可运行状态和不可中断状态是什么</h3><p>1.可运行状态进程，是指正在使用 CPU 或者正在等待 CPU 的进程，也就是我们ps 命令看到处于 R 状态的进程。<br>2.不可中断进程，(你做什么事情的时候是不能打断的?) 系统中最常见的是等待硬件设备的 I/O 响应，也就是我们 ps 命令中看到的 D 状态（也称为 Disk Sleep）的进程。<br>例如: 当一个进程向磁盘读写数据时，为了保证数据的一致性，在得到磁盘回复前，它是不能被其他进程或者中断打断的，这个时候的进程就处于不可中断状态。如果此时的进程被打断了，就容易出现磁盘数据与进程数据不一致的问题。所以，不可中断状态实际上是系统对进程和硬件设备的一种保护机制。</p>
+<p>划重点，因此你可以简单理解为，平均负载其实就是单位时间内的活跃进程数。</p>
+<h3 id="3-那平均负载为多少时合理"><a href="#3-那平均负载为多少时合理" class="headerlink" title="3.那平均负载为多少时合理"></a>3.那平均负载为多少时合理</h3><p>最理想的状态是每个 CPU 上都刚好运行着一个进程，这样每个 CPU 都得到了充分利用。所以在评判平均负载时，首先你要知道系统有几个 CPU，这可以通过 top 命令获取，或<code>grep &#39;model name&#39; /proc/cpuinfo</code></p>
+<p>例1、假设现在在 4、2、1核的CPU上，如果平均负载为 2 时，意味着什么呢？<br>Q1.在4 个 CPU 的系统上，意味着 CPU 有 50% 的空闲。<br>Q2.在2 个 CPU 的系统上，意味着所有的 CPU 都刚好被完全占用。<br>Q3.而1 个 CPU 的系统上，则意味着有一半的进程竞争不到 CPU。</p>
+<p>PS: 平均负载有三个数值，我们应该关注哪个呢?<br>实际上，我们都需要关注。就好比上海4月的天气，如果只看晚上天气，感觉在过冬天呢。但如果你结合了早上、中午、晚上三个时间点的温度来看，基本就可以全方位了解这一天的天气情况了。</p>
+<p>1.如果 1 分钟、5 分钟、15 分钟的三个值基本相同，或者相差不大，那就说明系统负载很平稳。<br>2.但如果 1 分钟的值远小于 15 分钟的值，就说明系统最近 1 分钟的负载在减少，而过去 15 分钟内却有很大的负载。<br>3.反过来，如果 1 分钟的值远大于 15 分钟的值，就说明最近 1 分钟的负载在增加，这种增加有可能只是临时性的，也有可能还会持续上升，所以就需要持续观察。<br>PS: 一旦 1 分钟的平均负载接近或超过了 CPU 的个数，就意味着系统正在发生过载的问题，这时就得分析问题，并要想办法优化了</p>
+<p>在来看个例子3、假设我们在有2个 CPU 系统上看到平均负载为 2.73，6.90，12.98<br>那么说明在过去1 分钟内，系统有 136% 的超载 (2.73/2=136%)<br>而在过去 5 分钟内，有 345% 的超载 (6.90/2=345%)<br>而在过去15 分钟内，有 649% 的超载，(12.98/2=649%)<br>但从整体趋势来看，系统的负载是在逐步的降低。</p>
+<h3 id="4-那么在实际生产环境中，平均负载多高时，需要我们重点关注呢？"><a href="#4-那么在实际生产环境中，平均负载多高时，需要我们重点关注呢？" class="headerlink" title="4.那么在实际生产环境中，平均负载多高时，需要我们重点关注呢？"></a>4.那么在实际生产环境中，平均负载多高时，需要我们重点关注呢？</h3><p>当平均负载高于 CPU 数量 70% 的时候，你就应该分析排查负载高的问题了。一旦负载过高，就可能导致进程响应变慢，进而影响服务的正常功能。<br>但 70% 这个数字并不是绝对的，最推荐的方法，还是把系统的平均负载监控起来，然后根据更多的历史数据，判断负载的变化趋势。当发现负载有明显升高趋势时，比如说负载翻倍了，你再去做分析和调查。</p>
+<h3 id="5-平均负载与-CPU-使用率有什么关系"><a href="#5-平均负载与-CPU-使用率有什么关系" class="headerlink" title="5.平均负载与 CPU 使用率有什么关系"></a>5.平均负载与 CPU 使用率有什么关系</h3><p>在实际工作中，我们经常容易把平均负载和 CPU 使用率混淆，所以在这里，我也做一个区分。可能你会疑惑，既然平均负载代表的是活跃进程数，那平均负载高了，不就意味着 CPU 使用率高吗？<br>我们还是要回到平均负载的含义上来，平均负载是指单位时间内，处于可运行状态和不可中断状态的进程数。所以，它不仅包括了正在使用 CPU 的进程，还包括等待 CPU 和等待 I/O 的进程。</p>
+<p>而 CPU 使用率，是单位时间内 CPU 繁忙情况的统计，跟平均负载并不一定完全对应。比如：<br>CPU 密集型进程，使用大量 CPU 会导致平均负载升高，此时这两者是一致的；<br>I/O 密集型进程，等待 I/O 也会导致平均负载升高，但 CPU 使用率不一定很高；<br>大量等待 CPU 的进程调度也会导致平均负载升高，此时的 CPU 使用率也会比较高。</p>
+<h3 id="6-平均负载案例分析实战"><a href="#6-平均负载案例分析实战" class="headerlink" title="6.平均负载案例分析实战"></a>6.平均负载案例分析实战</h3><p>下面，我们以三个示例分别来看这三种情况，并用 stress、mpstat、pidstat 等工具，找出平均负载升高的根源。<br>stress 是 Linux 系统压力测试工具，这里我们用作异常进程模拟平均负载升高的场景。<br>mpstat 是多核 CPU 性能分析工具，用来实时查看每个 CPU 的性能指标，以及所有 CPU 的平均指标。<br>pidstat 是一个常用的进程性能分析工具，用来实时查看进程的 CPU、内存、I/O 以及上下文切换等性能指标。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#如果出现无法使用mpstat、pidstat命令查看%wait指标建议更新下软件包</span><br><span class="line">wget http:&#x2F;&#x2F;pagesperso-orange.fr&#x2F;sebastien.godard&#x2F;sysstat-11.7.3-1.x86_64.rpm</span><br><span class="line">rpm -Uvh sysstat-11.7.3-1.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>场景一：CPU 密集型进程</p>
+<p>1.首先，我们在第一个终端运行 stress 命令，模拟一个 CPU 使用率 100% 的场景：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# stress --cpu 1 --timeout 600</span><br></pre></td></tr></table></figure>
+
+<p>2.接着，在第二个终端运行 uptime 查看平均负载的变化情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 使用watch -d 参数表示高亮显示变化的区域(注意负载会持续升高)</span><br><span class="line">[root@m01 ~]# watch -d uptime</span><br><span class="line">17:27:44 up 2 days,  3:11,  3 users,  load average: 1.10, 0.30, 0.17</span><br></pre></td></tr></table></figure>
+
+<p>3.最后，在第三个终端运行 mpstat 查看 CPU 使用率的变化情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># -P ALL 表示监控所有 CPU，后面数字 5 表示间隔 5 秒后输出一组数据</span><br><span class="line">[root@m01 ~]# mpstat -P ALL 5</span><br><span class="line">Linux 3.10.0-957.1.3.el7.x86_64 (m01)   2019年04月29日     _x86_64_    (1 CPU)</span><br><span class="line"></span><br><span class="line">17时32分03秒  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle</span><br><span class="line">17时32分08秒  all   99.80    0.00    0.20    0.00    0.00    0.00    0.00    0.00    0.00    0.00</span><br><span class="line">17时32分08秒    0   99.80    0.00    0.20    0.00    0.00    0.00    0.00    0.00    0.00    0.00</span><br><span class="line"></span><br><span class="line">#单核CPU所以只有一个all和0</span><br></pre></td></tr></table></figure>
+
+<p>4.从终端二中可以看到，1 分钟的平均负载会慢慢增加到 1.00，而从终端三中还可以看到，正好有一个 CPU 的使用率为 100%，但它的 iowait 只有 0。这说明，平均负载的升高正是由于 CPU 使用率为 100% 。那么，到底是哪个进程导致了 CPU 使用率为 100% 呢？可以使用 pidstat 来查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 间隔 5 秒后输出一组数据</span><br><span class="line">[root@m01 ~]# pidstat -u 5 1</span><br><span class="line">Linux 3.10.0-957.1.3.el7.x86_64 (m01)   2019年04月29日     _x86_64_(1 CPU)</span><br><span class="line"></span><br><span class="line">17时33分21秒   UID       PID    %usr %system  %guest    %CPU   CPU  Command</span><br><span class="line">17时33分26秒     0    110019   98.80    0.00    0.00   98.80     0  stress</span><br><span class="line"></span><br><span class="line">#从这里可以明显看到，stress 进程的 CPU 使用率为 100%。</span><br></pre></td></tr></table></figure>
+
+<p>场景二：I/O 密集型进程</p>
+<p>1.首先还是运行 stress 命令，但这次模拟 I/O 压力，即不停地执行 sync</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# stress  --io 1 --timeout 600s</span><br></pre></td></tr></table></figure>
+
+<p>2.然后在第二个终端运行 uptime 查看平均负载的变化情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# watch -d uptime</span><br><span class="line">18:43:51 up 2 days,  4:27,  3 users,  load average: 1.12, 0.65, 0.00</span><br></pre></td></tr></table></figure>
+
+<p>3.最后第三个终端运行 mpstat 查看 CPU 使用率的变化情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 显示所有 CPU 的指标，并在间隔 5 秒输出一组数据</span><br><span class="line">[root@m01 ~]# mpstat -P ALL 5</span><br><span class="line">Linux 3.10.0-693.2.2.el7.x86_64 (bgx.com)   2019年05月07日     _x86_64_    (1 CPU)</span><br><span class="line"></span><br><span class="line">14时20分07秒  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle</span><br><span class="line">14时20分12秒  all    0.20    0.00   82.45   17.35    0.00    0.00    0.00    0.00    0.00    0.00</span><br><span class="line">14时20分12秒    0    0.20    0.00   82.45   17.35    0.00    0.00    0.00    0.00    0.00    0.00</span><br><span class="line"></span><br><span class="line">#会发现cpu的与内核打交道的sys占用非常高</span><br></pre></td></tr></table></figure>
+
+<p>4.那么到底是哪个进程，导致 iowait 这么高呢？我们还是用 pidstat 来查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 间隔 5 秒后输出一组数据，-u 表示 CPU 指标</span><br><span class="line">[root@m01 ~]# pidstat -u 5 1</span><br><span class="line">Linux 3.10.0-957.1.3.el7.x86_64 (m01)   2019年04月29日     _x86_64_(1 CPU)</span><br><span class="line">18时29分37秒   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">18时29分42秒     0    127259   32.60    0.20    0.00   67.20   32.80     0  stress</span><br><span class="line">18时29分42秒     0    127261    4.60   28.20    0.00   67.20   32.80     0  stress</span><br><span class="line">18时29分42秒     0    127262    4.20   28.60    0.00   67.20   32.80     0  stress</span><br><span class="line"></span><br><span class="line">#可以发现，还是 stress 进程导致的。</span><br></pre></td></tr></table></figure>
+
+<p>场景三：大量进程的场景<br>当系统中运行进程超出 CPU 运行能力时，就会出现等待 CPU 的进程。</p>
+<p>1.首先，我们还是使用 stress，但这次模拟的是 4 个进程</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# stress -c 4 --timeout 600</span><br></pre></td></tr></table></figure>
+
+<p>2.由于系统只有 1 个 CPU，明显比 4 个进程要少得多，因而，系统的 CPU 处于严重过载状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# watch -d uptime</span><br><span class="line">19:11:07 up 2 days,  4:45,  3 users,  load average: 4.65, 2.65, 4.65</span><br></pre></td></tr></table></figure>
+
+<p>3.然后，再运行 pidstat 来看一下进程的情况：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 间隔 5 秒后输出一组数据</span><br><span class="line">[root@m01 ~]# pidstat -u 5 1</span><br><span class="line">平均时间:   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command</span><br><span class="line">平均时间:     0    130290   24.55    0.00    0.00   75.25   24.55     -  stress</span><br><span class="line">平均时间:     0    130291   24.95    0.00    0.00   75.25   24.95     -  stress</span><br><span class="line">平均时间:     0    130292   24.95    0.00    0.00   75.25   24.95     -  stress</span><br><span class="line">平均时间:     0    130293   24.75    0.00    0.00   74.65   24.75     -  stress</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，4 个进程在争抢 1 个 CPU，每个进程等待 CPU 的时间（也就是代码块中的 %wait 列）高达 75%。这些超出 CPU 计算能力的进程，最终导致 CPU 过载。</p>
+<p>分析完这三个案例，我再来归纳一下平均负载与CPU<br>平均负载提供了一个快速查看系统整体性能的手段，反映了整体的负载情况。但只看平均负载本身，我们并不能直接发现，到底是哪里出现了瓶颈。所以，在理解平均负载时，也要注意：<br>平均负载高有可能是 CPU 密集型进程导致的；<br>平均负载高并不一定代表 CPU 使用率高，还有可能是 I/O 更繁忙了；<br>当发现负载高的时候，你可以使用 mpstat、pidstat 等工具，辅助分析负载的来源</p>
+<p><a href="https://www.cnblogs.com/muahao/p/6346775.html" target="_blank" rel="noopener">stress工具使用参考</a></p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xilousonw</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/python+django.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><button class="reward-button"><i class="fas fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="微信支付" onclick="window.open('/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">微信支付</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="支付宝" onclick="window.open('/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></button></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/"><img class="prev-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">14-Linux——系统服务</div></div></a></div><div class="next-post pull-right"><a href="/2019/03/04/Linux%E2%80%94%E2%80%94%E8%BD%AF%E4%BB%B6%E7%AE%A1%E7%90%86/"><img class="next-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">12-Linux——软件管理</div></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div><div id="disqus_thread"></div><script>var disqus_config = function () {
+  this.page.url = 'http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/';
+  this.page.identifier = '2019/03/06/Linux——进程管理/';
+  this.page.title = '13-Linux——进程管理';
+};
+(function() { 
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+</script><script>function getDisqusCount() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/count.js';
+  s.id = 'dsq-count-scr';
+  (d.head || d.body).appendChild(s);
+}
+
+window.addEventListener('load', getDisqusCount, false);</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By xilousonw</div><div class="framework-info"><span>Driven </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="font_plus" title="Increase Font Size"><i class="fas fa-plus"></i></button><button id="font_minus" title="Decrease Font Size"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="scroll_to_comment fas fa-comments"></i></a><button class="close" id="mobile-toc-button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script></body></html>

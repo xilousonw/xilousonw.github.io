@@ -1,0 +1,302 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>14-Linux——系统服务 | 西楼</title><meta name="description" content="1.Linux启动流程CentOS6启动级别CentOS6 VS Centos7开机启动流程图解 2.Linux运行级别1.什么是运行级别，运行级别就是操作系统当前正在运行的功能级别   System V init运行级别 systemd目标名称 作用    0 runlevel0.target, poweroff.target 关机   1 runlevel1.target, rescue.ta"><meta name="author" content="xilousonw"><meta name="copyright" content="xilousonw"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="14-Linux——系统服务"><meta property="og:url" content="http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/"><meta property="og:site_name" content="西楼"><meta property="og:description" content="1.Linux启动流程CentOS6启动级别CentOS6 VS Centos7开机启动流程图解 2.Linux运行级别1.什么是运行级别，运行级别就是操作系统当前正在运行的功能级别   System V init运行级别 systemd目标名称 作用    0 runlevel0.target, poweroff.target 关机   1 runlevel1.target, rescue.ta"><meta property="og:image" content="http://yoursite.com/img/python+django.jpeg"><meta property="article:published_time" content="2019-03-07T13:20:41.000Z"><meta property="article:modified_time" content="2020-08-18T12:14:47.408Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="prev" title="15-Linux——磁盘管理" href="http://yoursite.com/2019/03/08/Linux%E2%80%94%E2%80%94%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/"><link rel="next" title="13-Linux——进程管理" href="http://yoursite.com/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="西楼" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Linux启动流程"><span class="toc-number">1.</span> <span class="toc-text">1.Linux启动流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Linux运行级别"><span class="toc-number">2.</span> <span class="toc-text">2.Linux运行级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是运行级别，运行级别就是操作系统当前正在运行的功能级别"><span class="toc-number">2.1.</span> <span class="toc-text">1.什么是运行级别，运行级别就是操作系统当前正在运行的功能级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-如何调整系统启动的运行级别？systemd使用’targets’而不是runlevels。默认情况下，有两个主要目标"><span class="toc-number">2.2.</span> <span class="toc-text">2.如何调整系统启动的运行级别？systemd使用’targets’而不是runlevels。默认情况下，有两个主要目标:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Linux-systemd"><span class="toc-number">3.</span> <span class="toc-text">3.Linux systemd</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-systemd的由来"><span class="toc-number">3.1.</span> <span class="toc-text">1.systemd的由来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-什么是systemd"><span class="toc-number">3.2.</span> <span class="toc-text">2.什么是systemd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-systemd的优势"><span class="toc-number">3.3.</span> <span class="toc-text">3.systemd的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Linux单用户模式"><span class="toc-number">4.</span> <span class="toc-text">4.Linux单用户模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Linux下救援模式"><span class="toc-number">5.</span> <span class="toc-text">5.Linux下救援模式</span></a></li></ol></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/python+django.jpeg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">西楼</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">14-Linux——系统服务</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="Created 2019-03-07 21:20:41"><i class="far fa-calendar-alt fa-fw"></i> Created 2019-03-07</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="Updated 2020-08-18 20:14:47"><i class="fas fa-history fa-fw"></i> Updated 2020-08-18</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta__icon"></i><span>Post View:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="far fa-comments fa-fw post-meta__icon"></i><span>Comments:</span><span class="disqus-comment-count comment-count"><a href="http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/#disqus_thread"></a></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="1-Linux启动流程"><a href="#1-Linux启动流程" class="headerlink" title="1.Linux启动流程"></a>1.Linux启动流程</h2><p><a href="https://www.runoob.com/linux/linux-system-boot.html" target="_blank" rel="noopener">CentOS6启动级别</a><br><a href="https://www.processon.com/view/link/5bffde0ae4b0f012f2382181" target="_blank" rel="noopener">CentOS6 VS Centos7开机启动流程图解</a></p>
+<h2 id="2-Linux运行级别"><a href="#2-Linux运行级别" class="headerlink" title="2.Linux运行级别"></a>2.Linux运行级别</h2><h3 id="1-什么是运行级别，运行级别就是操作系统当前正在运行的功能级别"><a href="#1-什么是运行级别，运行级别就是操作系统当前正在运行的功能级别" class="headerlink" title="1.什么是运行级别，运行级别就是操作系统当前正在运行的功能级别"></a>1.什么是运行级别，运行级别就是操作系统当前正在运行的功能级别</h3><table>
+<thead>
+<tr>
+<th>System V init运行级别</th>
+<th>systemd目标名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>runlevel0.target, poweroff.target</td>
+<td>关机</td>
+</tr>
+<tr>
+<td>1</td>
+<td>runlevel1.target, rescue.target</td>
+<td>单用户模式</td>
+</tr>
+<tr>
+<td>2</td>
+<td>runlevel2.target, multi-user.target</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>runlevel3.target, multi-user.target</td>
+<td>多用户的文本界面</td>
+</tr>
+<tr>
+<td>4</td>
+<td>runlevel4.target, multi-user.target</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>runlevel5.target, graphical.target</td>
+<td>多用户的图形界面</td>
+</tr>
+<tr>
+<td>6</td>
+<td>runlevel6.target, reboot.target</td>
+<td>重启</td>
+</tr>
+</tbody></table>
+<h3 id="2-如何调整系统启动的运行级别？systemd使用’targets’而不是runlevels。默认情况下，有两个主要目标"><a href="#2-如何调整系统启动的运行级别？systemd使用’targets’而不是runlevels。默认情况下，有两个主要目标" class="headerlink" title="2.如何调整系统启动的运行级别？systemd使用’targets’而不是runlevels。默认情况下，有两个主要目标:"></a>2.如何调整系统启动的运行级别？systemd使用’targets’而不是runlevels。默认情况下，有两个主要目标:</h3><p>multi-user.target：类似于运行级别3<br>graphical.target： 类似于运行级别5</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#1.查看系统默认运行级别</span><br><span class="line">[root@student ~]# systemctl get-default</span><br><span class="line"></span><br><span class="line">#2.要设置默认目标，请运行</span><br><span class="line">[root@student ~]# systemctl set-default TARGET.target</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-Linux-systemd"><a href="#3-Linux-systemd" class="headerlink" title="3.Linux systemd"></a>3.Linux systemd</h2><h3 id="1-systemd的由来"><a href="#1-systemd的由来" class="headerlink" title="1.systemd的由来"></a>1.systemd的由来</h3><p>Linux一直以来都是采用init进程作为祖宗进程，但是init有两个缺点：<br>1、启动时间长。Init进程是串行启动，只有前一个进程启动完，才会启动下一个进程。<br>2、启动脚本复杂，初始化完成后系统会加载很多脚本，脚本都会处理各自的情况，这会让脚本多而复杂。<br>Centos5 是启动速度最慢的，串行启动过程，无论进程相互之间有无依赖关系。<br>Centos6 相对启动速度有所改进。有依赖的进程之间依次启动而其他与之没有依赖关系的则并行同步启动。<br>Centos7 所有进程无论有无依赖关系则都是并行启动（当然很多时候进程没有真正启动而是只有一个信号或者说是标记而已，在真正利用的时候才会真正启动。）<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu785l0iqj30jy0am3zu.jpg" alt="img"></p>
+<h3 id="2-什么是systemd"><a href="#2-什么是systemd" class="headerlink" title="2.什么是systemd"></a>2.什么是systemd</h3><p>systemd即为system daemon守护进程，systemd主要解决上文的问题而诞生，systemd的目标是，为系统的启动和管理提供一套完整的解决方案。</p>
+<h3 id="3-systemd的优势"><a href="#3-systemd的优势" class="headerlink" title="3.systemd的优势"></a>3.systemd的优势</h3><p>1、最新系统都采用systemd管理（RedHat7,CentOS7,Ubuntu15等）<br>2、Centos7支持开机并行启动服务，显著提高开机启动效率。<br>3、Centos7关机只关闭正在运行的服务，而Centos6全部都关闭一次。<br>4、Centos7服务的启动与停止不在使用脚本进行管理，也就是/etc/init.d下不在有脚本。<br>5、Centos7使用systemd解决原有模式缺陷，比如原有service不会关闭程序产生的子进程。</p>
+<p>3.systemd相关配置文件<br>/usr/lib/systemd/system/ #类似Centos6系统的启动脚本，/etc/init.d/<br>/etc/systemd/system/ #类似Centos6系统的/etc/rc.d/rcN.d/<br>/etc/systemd/system/multi-user.target.wants/</p>
+<p>4.systemd管理服务相关命令<br>systemctl管理服务的启动、重启、停止、重载、查看状态等常用命令</p>
+<table>
+<thead>
+<tr>
+<th>systemctl命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>systemctl start crond.service</td>
+<td>启动服务</td>
+</tr>
+<tr>
+<td>systemctl stop crond.service</td>
+<td>停止服务</td>
+</tr>
+<tr>
+<td>systemctl restart crond.service</td>
+<td>重启服务</td>
+</tr>
+<tr>
+<td>systemctl reload crond.service</td>
+<td>重新加载配置</td>
+</tr>
+<tr>
+<td>systemctl status crond.servre</td>
+<td>查看服务运行状态</td>
+</tr>
+<tr>
+<td>systemctl is-active sshd.service</td>
+<td>查看服务是否在运行中</td>
+</tr>
+<tr>
+<td>systemctl mask crond.servre</td>
+<td>禁止服务运行</td>
+</tr>
+<tr>
+<td>systemctl unmask crond.servre</td>
+<td>取消禁止服务运行</td>
+</tr>
+</tbody></table>
+<p>当我们使用systemctl启动一个守护进程后，可以通过sysytemctl status查看此守护进程的状态</p>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>loaded</td>
+<td>服务单元的配置文件已经被处理</td>
+</tr>
+<tr>
+<td>active(running)</td>
+<td>服务持续运行</td>
+</tr>
+<tr>
+<td>active(exited)</td>
+<td>服务成功完成一次的配置</td>
+</tr>
+<tr>
+<td>active(waiting)</td>
+<td>服务已经运行但在等待某个事件</td>
+</tr>
+<tr>
+<td>inactive</td>
+<td>服务没有在运行</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>服务设定为开机运行</td>
+</tr>
+<tr>
+<td>disabled</td>
+<td>服务设定为开机不运行</td>
+</tr>
+<tr>
+<td>static</td>
+<td>服务开机不启动，但可以被其他服务调用启动</td>
+</tr>
+</tbody></table>
+<p>systemctl 设置服务开机启动、不启动、查看各级别下服务启动状态等常用命令</p>
+<table>
+<thead>
+<tr>
+<th>systemctl命令（7系统）</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>systemctl enable crond.service</td>
+<td>开机自动启动</td>
+</tr>
+<tr>
+<td>systemctl disable crond.service</td>
+<td>开机不自动启动</td>
+</tr>
+<tr>
+<td>systemctl list-unit-files</td>
+<td>查看各个级别下服务的启动与禁用</td>
+</tr>
+<tr>
+<td>systemctl is-enabled crond.service</td>
+<td>查看特定服务是否为开机自启动</td>
+</tr>
+<tr>
+<td>systemctl daemon-reload</td>
+<td>创建新服务文件需要重载变更</td>
+</tr>
+</tbody></table>
+<p>CentOS7系统, 管理员可以使用 systemctl 命令来管理服务器启动与停止</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#关机相关命令</span><br><span class="line">systemctl poweroff      #立即关机，常用</span><br><span class="line">#重启相关命令</span><br><span class="line">systemctl reboot        #重启命令，常用</span><br></pre></td></tr></table></figure>
+
+<p>systemctl的journalctl日志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">journalctl -n 20    #查看最后20行</span><br><span class="line">journalctl -f       #动态查看日志</span><br><span class="line">journalctl -p err   #查看日志的级别</span><br><span class="line">journalctl -u crond #查看某个服务的单元的日志</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-Linux单用户模式"><a href="#4-Linux单用户模式" class="headerlink" title="4.Linux单用户模式"></a>4.Linux单用户模式</h2><p>如何使用单用户模式进行变更系统密码？以Centos7系统为例：(Centos6破解方式请自行百度)</p>
+<p>第1步：重启Linux系统主机并出现引导界面时，按下键盘上的e键进入内核编辑界面<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu78c0vtlj313o0liq5i.jpg" alt="img"><br>第2步：在linux16这行的后面添加<code>enforcing=0 init=/bin/bash</code>，然后按下Ctrl + X组合键来运行修改过的内核程序<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu78hpm7rj313o0l4445.jpg" alt="img">第3步：大约5秒过后，进入到系统的单用户模式，依次输入以下命令，等待系统重启操作完毕，然后就可以使用新密码来登录Linux系统了。命令行执行效果如图所示。<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu78m2qbcj31880b2ju5.jpg" alt="img"><br><a href="https://mp.weixin.qq.com/s/1f-zCq8j4gL3xiB3AV9K3A" target="_blank" rel="noopener">Centos7单用户破解密码更为详细版</a></p>
+<h2 id="5-Linux下救援模式"><a href="#5-Linux下救援模式" class="headerlink" title="5.Linux下救援模式"></a>5.Linux下救援模式</h2><p>场景一：当系统坏了，无法登陆系统，但需要把里面的数据复制出来，怎么办？</p>
+<p>步骤一、先挂载光盘，然后选择光盘引导为第一位<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu78q5klhj30zk0t0gsi.jpg" alt="img"><br>步骤二、进入故障排除模式–&gt;然后选择救援模式<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu78uscnyj30zk0t0jtr.jpg" alt="img"><br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu78za1euj30zk0t0tce.jpg" alt="img"><br>步骤三、挂载真实系统后，发现数据都还存在<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu799c6qxj311e0u0n7x.jpg" alt="img"></p>
+<p>场景二、修复MBR，主要出现在安装双系统时，后安装的系统把原来系统的MBR删除了，需要修复。</p>
+<p>步骤一、破坏硬盘的前446字节，模拟MBR引号损坏，会发现重启无法启动系统</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@m01 ~]# dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;dev&#x2F;sda bs&#x3D;1 count&#x3D;446</span><br></pre></td></tr></table></figure>
+
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu79ech5bj31400okaeh.jpg" alt="img"><br>步骤二、重启系统，然后按照之前的操作进入救援模式，然后分配一个shell终端，挂载真实的操作系统进行修复<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu79jsjmpj311e0u0qdo.jpg" alt="img"><br>步骤二、修复MBR引导，然后重启连接服务器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#1.使用grub修复</span><br><span class="line"># grub2-install &#x2F;dev&#x2F;sda</span><br><span class="line"></span><br><span class="line">#2.然后退出</span><br><span class="line"># exit</span><br><span class="line"></span><br><span class="line">#3.最后重启进入系统</span><br><span class="line"># reboot</span><br></pre></td></tr></table></figure>
+
+<p>场景三、Centos7误删除grub文件如何进行修复。<br>步骤一、模拟误删故障</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#1.删除grub2 </span><br><span class="line">[root@m01 ~]# rm -rf  &#x2F;boot&#x2F;grub2 </span><br><span class="line">#2.重启计算机 </span><br><span class="line">[root@m01 ~]# reboot</span><br></pre></td></tr></table></figure>
+
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu79v2mrgj31400okmz3.jpg" alt="img"><br>步骤二、重启系统，然后按照之前的操作进入救援模式，然后分配一个shell终端，挂载真实的操作系统进行修复<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu7a4vrs6j311e0u07ez.jpg" alt="img"><br>步骤三、使用grub2-install、grub2-mkconfig恢复配置文件<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu7abz0x6j311e0u0n5f.jpg" alt="img"></p>
+<p>PS: 最后别忘记修改 BIOS 引导，让硬盘回归到第一引导</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xilousonw</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/">http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/python+django.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><button class="reward-button"><i class="fas fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="微信支付" onclick="window.open('/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">微信支付</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="支付宝" onclick="window.open('/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></button></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/03/08/Linux%E2%80%94%E2%80%94%E7%A3%81%E7%9B%98%E7%AE%A1%E7%90%86/"><img class="prev-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">15-Linux——磁盘管理</div></div></a></div><div class="next-post pull-right"><a href="/2019/03/06/Linux%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><img class="next-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">13-Linux——进程管理</div></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div><div id="disqus_thread"></div><script>var disqus_config = function () {
+  this.page.url = 'http://yoursite.com/2019/03/07/Linux%E2%80%94%E2%80%94%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1/';
+  this.page.identifier = '2019/03/07/Linux——系统服务/';
+  this.page.title = '14-Linux——系统服务';
+};
+(function() { 
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+</script><script>function getDisqusCount() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/count.js';
+  s.id = 'dsq-count-scr';
+  (d.head || d.body).appendChild(s);
+}
+
+window.addEventListener('load', getDisqusCount, false);</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By xilousonw</div><div class="framework-info"><span>Driven </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="font_plus" title="Increase Font Size"><i class="fas fa-plus"></i></button><button id="font_minus" title="Decrease Font Size"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="scroll_to_comment fas fa-comments"></i></a><button class="close" id="mobile-toc-button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script></body></html>

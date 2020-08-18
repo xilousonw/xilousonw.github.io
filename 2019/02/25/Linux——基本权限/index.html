@@ -1,0 +1,205 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>6-Linux——基本权限 | 西楼</title><meta name="description" content="1.权限基本概述1.什么是权限？我们可以把它理解为操作系统对用户能够执行的功能所设立的限制，主要用于约束用户能对系统所做的操作，以及内容访问的范围，或者说，权限是指某个特定的用户具有特定的系统资源使用权力。 2.为什么要有权限？因为系统中不可能只存在一个root用户，一定会存在多个用户，为了保护每个登陆用户的隐私和工作环境，所以就有了权限。(比如三个租客合租同一个房子，a租客要使用b租客的肥皂，那"><meta name="author" content="xilousonw"><meta name="copyright" content="xilousonw"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://yoursite.com/2019/02/25/Linux%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E6%9D%83%E9%99%90/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="6-Linux——基本权限"><meta property="og:url" content="http://yoursite.com/2019/02/25/Linux%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E6%9D%83%E9%99%90/"><meta property="og:site_name" content="西楼"><meta property="og:description" content="1.权限基本概述1.什么是权限？我们可以把它理解为操作系统对用户能够执行的功能所设立的限制，主要用于约束用户能对系统所做的操作，以及内容访问的范围，或者说，权限是指某个特定的用户具有特定的系统资源使用权力。 2.为什么要有权限？因为系统中不可能只存在一个root用户，一定会存在多个用户，为了保护每个登陆用户的隐私和工作环境，所以就有了权限。(比如三个租客合租同一个房子，a租客要使用b租客的肥皂，那"><meta property="og:image" content="http://yoursite.com/img/python+django.jpeg"><meta property="article:published_time" content="2019-02-25T13:32:03.000Z"><meta property="article:modified_time" content="2020-08-18T12:11:46.103Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="prev" title="7-Linux——特殊权限" href="http://yoursite.com/2019/02/26/Linux%E2%80%94%E2%80%94%E7%89%B9%E6%AE%8A%E6%9D%83%E9%99%90/"><link rel="next" title="5-Linux——用户管理" href="http://yoursite.com/2019/02/24/Linux%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5/js/md5.min.js"></script><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  bookmark: {
+    message_prev: 'Press',
+    message_next: 'to bookmark this page'
+  },
+  runtime_unit: 'days',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"><link rel="alternate" href="/atom.xml" title="西楼" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">29</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-权限基本概述"><span class="toc-number">1.</span> <span class="toc-text">1.权限基本概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是权限？"><span class="toc-number">1.1.</span> <span class="toc-text">1.什么是权限？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么要有权限？"><span class="toc-number">1.2.</span> <span class="toc-text">2.为什么要有权限？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-权限与用户之间的关系？"><span class="toc-number">1.3.</span> <span class="toc-text">3.权限与用户之间的关系？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-权限中的rwx分别代表什么含义？"><span class="toc-number">1.4.</span> <span class="toc-text">4.权限中的rwx分别代表什么含义？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-权限设置示例"><span class="toc-number">2.</span> <span class="toc-text">2.权限设置示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-为什么要设定权限，我们又如何修改一个文件的权限"><span class="toc-number">2.1.</span> <span class="toc-text">1.为什么要设定权限，我们又如何修改一个文件的权限?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用chmod设定权限示例"><span class="toc-number">2.2.</span> <span class="toc-text">2.使用chmod设定权限示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-权限设置案例"><span class="toc-number">2.3.</span> <span class="toc-text">3.权限设置案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-权限设置案例-1"><span class="toc-number">3.</span> <span class="toc-text">3.权限设置案例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-属主属组设置"><span class="toc-number">4.</span> <span class="toc-text">4.属主属组设置</span></a></li></ol></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/python+django.jpeg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">西楼</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down menus-expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">6-Linux——基本权限</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="Created 2019-02-25 21:32:03"><i class="far fa-calendar-alt fa-fw"></i> Created 2019-02-25</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="Updated 2020-08-18 20:11:46"><i class="fas fa-history fa-fw"></i> Updated 2020-08-18</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta__icon"></i><span>Post View:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"><span class="post-meta__separator">|</span><i class="far fa-comments fa-fw post-meta__icon"></i><span>Comments:</span><span class="disqus-comment-count comment-count"><a href="http://yoursite.com/2019/02/25/Linux%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E6%9D%83%E9%99%90/#disqus_thread"></a></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h2 id="1-权限基本概述"><a href="#1-权限基本概述" class="headerlink" title="1.权限基本概述"></a>1.权限基本概述</h2><h3 id="1-什么是权限？"><a href="#1-什么是权限？" class="headerlink" title="1.什么是权限？"></a>1.什么是权限？</h3><p>我们可以把它理解为操作系统对用户能够执行的功能所设立的限制，主要用于约束用户能对系统所做的操作，以及内容访问的范围，或者说，权限是指某个特定的用户具有特定的系统资源使用权力。</p>
+<h3 id="2-为什么要有权限？"><a href="#2-为什么要有权限？" class="headerlink" title="2.为什么要有权限？"></a>2.为什么要有权限？</h3><p>因为系统中不可能只存在一个root用户，一定会存在多个用户，为了保护每个登陆用户的隐私和工作环境，所以就有了权限。(比如三个租客合租同一个房子，a租客要使用b租客的肥皂，那这个事情？？)</p>
+<h3 id="3-权限与用户之间的关系？"><a href="#3-权限与用户之间的关系？" class="headerlink" title="3.权限与用户之间的关系？"></a>3.权限与用户之间的关系？</h3><p>在Linux系统中，针对文件定义了三种身份，分别是属主(owner)、属组(group)、其他人(others)，每一种身份又对应三种权限，分别是可读(readable)、可写(writable)、可执行(excutable)。</p>
+<p><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu6xvd061j30l208lwfe.jpg" alt="img"><br>用户对文件资源，有三种角色ugo，当一个用户访问文件流程如下</p>
+<p>1) 判断用户是否为文件所有者，如果是则按所有者的权限进行访问<br>2) 判断用户是否为文件所有组成员，如果是则按组的权限进行访问<br>3) 如果不是所有者，也不是该文件所属组，则按匿名权限进行访问</p>
+<h3 id="4-权限中的rwx分别代表什么含义？"><a href="#4-权限中的rwx分别代表什么含义？" class="headerlink" title="4.权限中的rwx分别代表什么含义？"></a>4.权限中的rwx分别代表什么含义？</h3><p>当我们使用ls -l查看一个文件的详细属性时，能看到每个文件都有一个9位基本权限位，比如: <code>rwxr-xr-x</code>其中每三位字符为一组，分别表示属主权限位，属组权限位，匿名权限位。<br>linux中基本权限位则是使用这9位字符来表示，主要控制文件属主(User)、属组(Group)、其他用户(Other)</p>
+<table>
+<thead>
+<tr>
+<th>字母</th>
+<th>含义</th>
+<th>对应权限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>r(read)</td>
+<td>读取权限</td>
+<td>4</td>
+</tr>
+<tr>
+<td>w(write)</td>
+<td>写入权限</td>
+<td>2</td>
+</tr>
+<tr>
+<td>x(execute)</td>
+<td>执行权限</td>
+<td>1</td>
+</tr>
+<tr>
+<td>-(没有权限)</td>
+<td>没有权限</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>PS: 如果权限位不可读、不可写、不可执行，则全部使用-作为占位符表示。</p>
+<h2 id="2-权限设置示例"><a href="#2-权限设置示例" class="headerlink" title="2.权限设置示例"></a>2.权限设置示例</h2><p>文件示例: rwxrw-r– alice hr file1.txt<br>Q1: alice对file1文件拥有什么权限?<br>Q2: jack 对 file1.txt 文件有什么权限? 前提:jack 属于 hr 组<br>Q3: tom 对 file1.txt 文件有什么权限?</p>
+<h3 id="1-为什么要设定权限，我们又如何修改一个文件的权限"><a href="#1-为什么要设定权限，我们又如何修改一个文件的权限" class="headerlink" title="1.为什么要设定权限，我们又如何修改一个文件的权限?"></a>1.为什么要设定权限，我们又如何修改一个文件的权限?</h3><p>Q1: 为什么要设定权限，可以赋于某个用户或组 – 能够以何种方式 – 访问某个文件<br>Q2: Linux下使用chmod命令来变更权限，root用户可以变更所有文件的权限，而普通用户仅能变更属于自己的文件。</p>
+<h3 id="2-使用chmod设定权限示例"><a href="#2-使用chmod设定权限示例" class="headerlink" title="2.使用chmod设定权限示例"></a>2.使用chmod设定权限示例</h3><p>方式一: ugo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@bgx ~]# touch file                    #创建文件</span><br><span class="line">[root@bgx ~]# chmod a&#x3D;rwx file              #给所有人添加读写执行权限</span><br><span class="line">[root@bgx ~]# chmod a&#x3D;-rwx file             #取消所有的权限</span><br><span class="line">[root@bgx ~]# chmod u&#x3D;rwx,g&#x3D;rw,o&#x3D;- file     #属主读写执行，属组读写，其他人无权限</span><br><span class="line">[root@bgx ~]# chmod ug&#x3D;rwx,o&#x3D;r file         #属主属组读写执行，其他人读权限</span><br><span class="line">[root@bgx ~]# ll file</span><br><span class="line">-rwxrw-r-- 1 root root 0 Apr 13 03:29 file</span><br></pre></td></tr></table></figure>
+
+<p>方式二、number</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#选项:  -R递归修改</span><br><span class="line">[root@bgx ~]# touch file</span><br><span class="line">[root@bgx ~]# chmod 644 file</span><br><span class="line">[root@bgx ~]# chmod 600 file</span><br><span class="line">[root@bgx ~]# ll file</span><br><span class="line">-rw------- 1 root root 0 Apr 13 03:29 file</span><br><span class="line"></span><br><span class="line">#针对目录设定权限</span><br><span class="line">[root@bgx ~]# mkdir dir</span><br><span class="line">[root@bgx ~]# chmod 777 dir&#x2F;    #修改目录允许所有人访问</span><br><span class="line">[root@bgx ~]# chmod -R 755 dir&#x2F; #修改目录及子目录权限</span><br><span class="line">[root@bgx ~]# ll -d dir&#x2F;</span><br><span class="line">drwxr-xr-x 2 root root 6 Apr 13 03:34 dir&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-权限设置案例"><a href="#3-权限设置案例" class="headerlink" title="3.权限设置案例"></a>3.权限设置案例</h3><p>针对 hr 部门的访问目录/home/hr 设置权限，要求如下:<br>1.root 用户和 hr 组的员工可以读、写、执行<br>2.其他用户没有任何权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@bgx ~]# groupadd hr</span><br><span class="line">[root@bgx ~]# useradd hr01 -G hr</span><br><span class="line">[root@bgx ~]# useradd hr02 -G hr</span><br><span class="line">[root@bgx ~]# mkdir &#x2F;home&#x2F;hr</span><br><span class="line">[root@bgx ~]# chgrp hr &#x2F;home&#x2F;hr</span><br><span class="line">[root@bgx ~]# chmod 770 &#x2F;home&#x2F;hr</span><br><span class="line">[root@bgx ~]# ll -d &#x2F;home&#x2F;hr</span><br><span class="line">drwxrwx--- 2 root hr 6 Apr 13 03:26 &#x2F;home&#x2F;hr</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-权限设置案例-1"><a href="#3-权限设置案例-1" class="headerlink" title="3.权限设置案例"></a>3.权限设置案例</h2><p>在Linux中权限对文件和对目录的影响是有不同区别的。</p>
+<table>
+<thead>
+<tr>
+<th>权限</th>
+<th>对文件的影响</th>
+<th>对目录的影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>读取权限（r）</td>
+<td>具有读取阅读文件内容权限</td>
+<td>具有浏览目录及子目录</td>
+</tr>
+<tr>
+<td>写入权限（w）</td>
+<td>具有新增、修改文件内容的权限</td>
+<td>具有增加和删除目录内文件</td>
+</tr>
+<tr>
+<td>执行权限（x）</td>
+<td>具有执行文件的权限</td>
+<td>具有访问目录的内容(取决于目录中文件权限)</td>
+</tr>
+</tbody></table>
+<p>文件权限实验案例:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#1.新建文件，并添加内容至文件中，默认文件匿名用户仅有读权限</span><br><span class="line">[root@lqz ~]# echo &quot;date&quot; &gt; filename</span><br><span class="line">[root@lqz ~]# ll filename</span><br><span class="line">-rw-r--r-- 1 root root 5 Jan 24 08:24 filename</span><br><span class="line"></span><br><span class="line">#2.切换bgx普通用户</span><br><span class="line">[root@lqz ~]# su - bgx</span><br><span class="line"></span><br><span class="line">#3.对文件拥有读取的权限，但bgx用户对文件没有执行和删除的权限</span><br><span class="line">[bgx@lqz ~]$ cat  &#x2F;root&#x2F;filename</span><br><span class="line">date</span><br><span class="line"></span><br><span class="line">#4.使用root增加x执行权限</span><br><span class="line">[root@lqz ~]# chmod o+x &#x2F;root&#x2F;filename</span><br><span class="line">[root@lqz ~]# ll &#x2F;root&#x2F;filename</span><br><span class="line">-rw-r--r-x 1 root root 5 Jan 24 08:24 &#x2F;root&#x2F;filename</span><br><span class="line"></span><br><span class="line">#5.测试x权限是否真的能执行该文件</span><br><span class="line">[bgx@lqz ~]$ &#x2F;root&#x2F;filename</span><br><span class="line">Wed Jan 24 08:28:34 EST 2018</span><br><span class="line"></span><br><span class="line">#6.增加w执行权限</span><br><span class="line">[root@lqz ~]# chmod o+w &#x2F;root&#x2F;filename</span><br><span class="line">[root@lqz ~]# ll &#x2F;root&#x2F;filename</span><br><span class="line">-rw-r--rwx 1 root root 5 Jan 24 08:24 &#x2F;root&#x2F;filename</span><br><span class="line"></span><br><span class="line">#7.测试执行权限</span><br><span class="line">[bgx@lqz ~]$ vim &#x2F;root&#x2F;filename</span><br></pre></td></tr></table></figure>
+
+<p>PS: 总结rwx对文件的影响<br>读取权限（r）具有读取阅读文件内容权限<br>1.只能使用查看类命令cat、head、tail、less、more</p>
+<p>写入权限（w）具有新增、修改文件内容的权限<br>1.使用vim编辑会提示权限拒绝, 但可强制保存,会覆盖文件的所有内容<br>2.使用echo命令重定向的方式可以往文件内写入数据,&gt;&gt;可以进行追加<br>3.不能删除文件,因为删除文件看的不是文件的属性,需要看上级目录是否有w的权限</p>
+<p>执行权限（x）具有执行文件的权限<br>1.执行权限什么用都没有<br>2.如果普通用户需要执行文件,需要配合r权限</p>
+<p>目录权限实验案例:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#示例1: 创建目录，并在该目录下创建文件，匿名用户对目录没有w权限，对文件有777权限 </span><br><span class="line">[root@lqz ~]# mkdir &#x2F;dirname</span><br><span class="line">[root@lqz ~]# echo &quot;test&quot; &gt;&gt; &#x2F;dirname&#x2F;filename</span><br><span class="line">[root@lqz ~]# chmod 777 &#x2F;dirname&#x2F;filename</span><br><span class="line"></span><br><span class="line">#普通用户验证权限，能正常查看，但无法删除[奇怪]</span><br><span class="line">[bgx@lqz ~]$ cat &#x2F;dirname&#x2F;filename</span><br><span class="line">test</span><br><span class="line">[bgx@lqz ~]$ rm -f &#x2F;dirname&#x2F;filename</span><br><span class="line">rm: cannot remove ‘&#x2F;dirname&#x2F;filename’: Permission denied</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#示例2: 设置目录777权限，相当于匿名用户对目录有w权限，对文件没有任何权限</span><br><span class="line">[root@lqz ~]# chmod 777 &#x2F;dirname&#x2F;</span><br><span class="line">[root@lqz ~]# chmod 000 &#x2F;dirname&#x2F;filename</span><br><span class="line"></span><br><span class="line">#普通用户验证权限</span><br><span class="line">[bgx@lqz ~]$ cat &#x2F;dirname&#x2F;filename</span><br><span class="line">cat: &#x2F;dirname&#x2F;filename: Permission denied</span><br><span class="line">[bgx@lqz ~]$ rm -f &#x2F;dirname&#x2F;filename</span><br><span class="line">[bgx@lqz ~]$ touch &#x2F;dirname&#x2F;filename_2</span><br></pre></td></tr></table></figure>
+
+<p>PS: 总结rwx对目录的影响<br>读取权限（r），如果目录只有r权限: 具有浏览目录及子目录权限<br>1.可以使用ls命令浏览目录及子目录， 但同时也会提示权限拒绝<br>2.使用ls -l命令浏览目录及子目录，文件属性会带问号，并且只能看到文件名<br>总结: 目录只有r权限，仅仅只能浏览内的文件名，无其他操作权限</p>
+<p>写入权限（w），如果目录只有w权限: 具有增加、删除或修改目录内文件名权限(需要x权限配合)<br>PS: 如果目录有w权限, 可以在目录内创建文件, 删除文件(跟文件本身权限无关)<br>不能进入目录、不能复制目录、不能删除目录、不能移动目录</p>
+<p>执行权限（x），如果目录只有x权限<br>1.只能进入目录<br>2.不能浏览、复制、移动、删除</p>
+<p>Linux权限总结与注意事项<br>文件r权限, 只给用户查看,无其他操作<br>文件rw权限, 可以查看和编辑文件内容<br>文件rx权限, 允许查看和执行文件、但不能修改文件—–&gt;PASS<br>文件rwx权限, 能读,能写,能执行,但不能删除,因为删除需要看上级目录的权限有没有w—–&gt;PASS<br>目录rx权限, 允许浏览目录内文件以及子目录、并允许在目录内新建文件, 不允许创建、删除文件和目录<br>目录wx权限, 能进入目录,能删除内容,能写入内容,但就是无法使用ls cat这样的命令—–&gt;PASS<br>目录rw权限, 能看,能写,但无法进入目录—–&gt;PASS<br>PS: 文件的 x权限小心给予，目录的 w权限小心给予。<br>PS: 文件通常设定的权限是644,目录设定的权限是755<br>PS: 控制目录权限755, 如果有普通用户需要操作目录里面的文件，在来看文件的权限</p>
+<h2 id="4-属主属组设置"><a href="#4-属主属组设置" class="headerlink" title="4.属主属组设置"></a>4.属主属组设置</h2><p>变更文件属主和属组的意义？<br>比如: 我现在手里有多套房，希望出售其中的A房进行变现，那么我会考虑将A房过户给金主，过户成功后A房就属于金主了，那么此时A房的拥有者就属于金主而不再属于我。<br><img src= "/img/loading.gif" data-src="https://tva1.sinaimg.cn/large/007S8ZIlgy1ghu6y1texfj30mc0g4dhf.jpg" alt="img"></p>
+<p>在Linux中如何变更一个文件或者一个资源的属主和属组呢，可以使用chown、chgrp命令实现。<br>chown能设置属主和属组，chgrp仅能设置属组。（所以用哪个你懂的）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#chown 更改属主以及属组 -R：递归修改</span><br><span class="line"></span><br><span class="line">#准备环境，创建文件和目录</span><br><span class="line">[root@bgx ~]# mkdir dir&#x2F;test1 &amp;&amp; touch dir&#x2F;file</span><br><span class="line"></span><br><span class="line">#示例1: 修改所属主为bin</span><br><span class="line">[root@bgx ~]# chown bin dir&#x2F;</span><br><span class="line"></span><br><span class="line">#示例2: 修改所属组为adm</span><br><span class="line">[root@bgx ~]# chown .adm dir&#x2F;</span><br><span class="line"></span><br><span class="line">#示例3: 递归修改目录及目录下的所有文件属主和属组</span><br><span class="line">[root@bgx ~]# chown -R root.root dir&#x2F;</span><br></pre></td></tr></table></figure>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">xilousonw</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://yoursite.com/2019/02/25/Linux%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E6%9D%83%E9%99%90/">http://yoursite.com/2019/02/25/Linux%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E6%9D%83%E9%99%90/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/python+django.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><button class="reward-button"><i class="fas fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="微信支付" onclick="window.open('/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">微信支付</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg" alt="支付宝" onclick="window.open('/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpeg')"/><div class="post-qr-code__desc">支付宝</div></li></ul></div></button></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2019/02/26/Linux%E2%80%94%E2%80%94%E7%89%B9%E6%AE%8A%E6%9D%83%E9%99%90/"><img class="prev-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">7-Linux——特殊权限</div></div></a></div><div class="next-post pull-right"><a href="/2019/02/24/Linux%E2%80%94%E2%80%94%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86/"><img class="next-cover" data-src="/img/python+django.jpeg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">5-Linux——用户管理</div></div></a></div></nav><hr><div id="post-comment"><div class="comment_headling"><i class="fas fa-comments fa-fw"></i><span> Comment</span></div><div id="disqus_thread"></div><script>var disqus_config = function () {
+  this.page.url = 'http://yoursite.com/2019/02/25/Linux%E2%80%94%E2%80%94%E5%9F%BA%E6%9C%AC%E6%9D%83%E9%99%90/';
+  this.page.identifier = '2019/02/25/Linux——基本权限/';
+  this.page.title = '6-Linux——基本权限';
+};
+(function() { 
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+</script><script>function getDisqusCount() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://.disqus.com/count.js';
+  s.id = 'dsq-count-scr';
+  (d.head || d.body).appendChild(s);
+}
+
+window.addEventListener('load', getDisqusCount, false);</script></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By xilousonw</div><div class="framework-info"><span>Driven </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="font_plus" title="Increase Font Size"><i class="fas fa-plus"></i></button><button id="font_minus" title="Decrease Font Size"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="Switch Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="Setting"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="Scroll To Comments"><i class="scroll_to_comment fas fa-comments"></i></a><button class="close" id="mobile-toc-button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script></body></html>
